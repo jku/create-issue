@@ -18,4 +18,4 @@ jobs:
     if: always() && needs.actual_job.result == 'failure'
     steps:
       - name: Create issue on failure
-        uses: jku/create-issue/.github/actions/create-issue@main
+        uses: jku/create-issue/.github/actions/open-workflow-issue@main
