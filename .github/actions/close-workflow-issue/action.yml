@@ -2,6 +2,10 @@ name: Close workflow issue
 description: Close a GitHub issue opened by open-workflow-issue
 # The issue is identified by it's title which is built from
 # the workflow name: make sure the workflow name is unique enough
+#
+# Required permissions:
+# * issues: write
+# * actions: read
 
 runs:
   using: "composite"
