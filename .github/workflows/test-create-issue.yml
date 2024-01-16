@@ -15,6 +15,7 @@ jobs:
     needs: [actual_job]
     permissions:
       issues: 'write'
+      actions: 'read'
     if: always() && needs.actual_job.result == 'failure'
     steps:
       - name: Create issue on failure
