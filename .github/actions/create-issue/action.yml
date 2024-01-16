@@ -28,7 +28,6 @@ runs:
             console.log("succeeding. TODO")
           } else {
             console.log("failing. TODO: file issue")
-            # find existing issue
             reponame = context.repo.owner + "/" + context.repo.repo
             title = "[bug]: " + context.workflow
             const issues = await github.rest.search.issuesAndPullRequests({
@@ -36,7 +35,6 @@ runs:
             })
             console.log(issues)
             if (issues.data.total_count == 0) {
-              # File issue
             } else {
               console.log("issue exists already, not filing a new one")
             }
