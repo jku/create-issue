@@ -1,5 +1,8 @@
-name: Create Issue
-description: Create a github issue for a workflow failure
+name: Open workflow issue
+description: Open a github issue for a workflow failure
+# An issue is filed per workflow: if an open issue is found
+# another one is not opened. The issues are identitied by title
+# which is built using the workflow name.
 
 runs:
   using: "composite"
@@ -30,13 +33,13 @@ runs:
                 repo: context.repo.repo,
                 title: title,
                 labels: ["bug"],
-                body: "### Workflow run failed for '" + context.workflow + "'.\n" + 
+                body: "### Workflow run failed for '" + context.workflow + "'.\n" +
                       "Run: " + run.data.html_url + "\n" +
                       "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
                       "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
                       "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
                       "Date: " + run.data.run_started_at + "\n"
-              })              
+              })
           } else {
             console.log("issue exists already, not filing a new one")
           }

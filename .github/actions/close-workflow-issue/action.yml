@@ -1,5 +1,7 @@
-name: Close issue
-description: Close a GitHub issue based on workflow success
+name: Close workflow issue
+description: Close a GitHub issue opened by open-workflow-issue
+# The issue is identified by it's title which is built from
+# the workflow name: make sure the workflow name is unique enough
 
 runs:
   using: "composite"
@@ -28,7 +30,7 @@ runs:
           } else {
             issue = issues.data.items[0].number
             console.log("Issue " + issue + " found, closing issue...")
-            
+
             github.rest.issues.createComment({
               issue_number: issue,
               owner: context.repo.owner,
