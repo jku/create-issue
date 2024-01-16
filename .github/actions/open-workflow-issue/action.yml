@@ -4,19 +4,12 @@ description: Open a github issue for a workflow failure
 # another one is not opened. The issues are identitied by title
 # which is built using the workflow name.
 
-inputs:
-  token:
-    description: 'GitHub token'
-    required: false
-    default: ${{ github.token }}
-
 runs:
   using: "composite"
   steps:
     - name: Create issue
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
-        github-token: ${{ inputs.token }}
         script: |
           var path = require('path');
 
