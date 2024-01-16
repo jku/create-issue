@@ -1,8 +1,12 @@
 name: Open workflow issue
 description: Open a github issue for a workflow failure
-# An issue is filed per workflow: if an open issue is found
-# another one is not opened. The issues are identitied by title
-# which is built using the workflow name.
+# An issue is filed unless one for the same workflow is open already.
+# The issues are identitied by title which is built using the workflow
+# name.
+#
+# Required permissions:
+# * issues: write
+# * actions: read
 
 runs:
   using: "composite"
