@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: 'write'
+      actions: 'read'
     steps:
       - name: Create issue
         uses: jku/create-issue/.github/actions/open-workflow-issue@main
@@ -17,6 +18,7 @@ jobs:
     needs: [create]
     permissions:
       issues: 'write'
+      actions: 'read'
     steps:
       - name: Close issue
         uses: jku/create-issue/.github/actions/close-workflow-issue@main
