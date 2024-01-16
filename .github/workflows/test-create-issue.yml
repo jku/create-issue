@@ -19,5 +19,3 @@ jobs:
     steps:
       - name: Create issue on failure
         uses: jku/create-issue/.github/actions/create-issue@main
-        with:
-          success: false
