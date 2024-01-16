@@ -24,7 +24,7 @@ runs:
           console.log(run)
 
 
-          if ({{ inputs.success }}) { 
+          if (${{ inputs.success }}) { 
             console.log("succeeding. TODO")
           } else {
             console.log("failing. TODO: file issue")
