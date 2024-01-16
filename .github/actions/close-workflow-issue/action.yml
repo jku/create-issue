@@ -3,19 +3,12 @@ description: Close a GitHub issue opened by open-workflow-issue
 # The issue is identified by it's title which is built from
 # the workflow name: make sure the workflow name is unique enough
 
-inputs:
-  token:
-    description: 'GitHub token'
-    required: false
-    default: ${{ github.token }}
-
 runs:
   using: "composite"
   steps:
     - name: Close issue
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
-        github-token: ${{ inputs.token }}
         script: |
           var path = require('path');
 
