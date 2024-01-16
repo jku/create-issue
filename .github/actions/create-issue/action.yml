@@ -1,57 +1,41 @@
 name: Create Issue
-description: Create a github issue on workflow failure or close an issue on success
+description: Create a github issue for a workflow failure
 
-inputs:
-  success:
-    description: "Is the workflow succeeding"
-    required: true
-    type: bool
 runs:
   using: "composite"
   steps:
-    - name: Create or close issue
+    - name: Create issue
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |
           var path = require('path');
 
-          console.log("WIP")
-          console.log(context)
-          console.log(context.runId)
-          run = await github.rest.actions.getWorkflowRun( {
+          const reponame = context.repo.owner + "/" + context.repo.repo
+          const title = "[bug]: " + context.workflow
+          const workflow_file = path.basename(context.payload.workflow)
+          const issues = await github.rest.search.issuesAndPullRequests({
+            q:  title + "+label:bug+state:open+type:issue+repo:" + reponame,
+          })
+
+          const run = await github.rest.actions.getWorkflowRun( {
             owner: context.repo.owner,
             repo: context.repo.repo,
             run_id: context.runId,
           })
-          console.log(run)
 
-
-          if (${{ inputs.success }}) { 
-            console.log("succeeding. TODO")
+          if (issues.data.total_count == 0) {
+            console.log("Filing an issue for failing workflow...")
+            await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: "### Workflow run failed for '" + context.workflow + "'.\n" + 
+                      "Run: " + run.data.html_url + "\n" +
+                      "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
+                      "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
+                      "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
+                      "Date: " + run.data.run_started_at + "\n"
+              })              
           } else {
-            console.log("failing. TODO: file issue")
-            reponame = context.repo.owner + "/" + context.repo.repo
-            title = "[bug]: " + context.workflow
-            workflow_file = path.basename(context.payload.workflow)
-
-            const issues = await github.rest.search.issuesAndPullRequests({
-              q:  title + "+label:bug+state:open+type:issue+repo:" + reponame,
-            })
-            console.log(issues)
-            if (issues.data.total_count == 0) {
-              await github.rest.issues.create({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  title: title,
-                  body: "### Workflow run failed for '" + context.workflow + "'.\n" + 
-                        "Run: " + run.data.html_url + "\n" +
-                        "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
-                        "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
-                        "Trigger: " + context.eventName + "\n" +
-                        "Branch: " + context.payload.ref + "\n" +
-                        "Date: " + run.data.run_started_at + "\n"
-                })              
-            } else {
-              console.log("issue exists already, not filing a new one")
-            }
+            console.log("issue exists already, not filing a new one")
           }
