@@ -13,6 +13,8 @@ runs:
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |
+          var path = require('path');
+
           console.log("WIP")
           console.log(context)
           console.log(context.runId)
@@ -30,6 +32,8 @@ runs:
             console.log("failing. TODO: file issue")
             reponame = context.repo.owner + "/" + context.repo.repo
             title = "[bug]: " + context.workflow
+            workflow_file = path.basename(context.payload.workflow)
+
             const issues = await github.rest.search.issuesAndPullRequests({
               q:  title + "+label:bug+state:open+type:issue+repo:" + reponame,
             })
@@ -42,7 +46,7 @@ runs:
                   body: "### Workflow run failed for '" + context.workflow + "'.\n" + 
                         "Run: " + run.data.html_url + "\n" +
                         "Workflow: " + run.data.repository.html_url + "/" + run.data.path + "\n" + 
-                        "Workflow runs: " + run.data.repository.html_url + /actions/workflows/ + workflow_file + "\n" + 
+                        "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
                         "Trigger: " + context.eventName + "\n" +
                         "Branch: " + context.payload.ref + "\n" +
                         "Date: " + run.data.run_started_at + "\n"
