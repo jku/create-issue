@@ -29,6 +29,7 @@ runs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: title,
+                labels: ["bug"],
                 body: "### Workflow run failed for '" + context.workflow + "'.\n" + 
                       "Run: " + run.data.html_url + "\n" +
                       "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
