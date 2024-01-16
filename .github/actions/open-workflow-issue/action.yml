@@ -21,7 +21,7 @@ runs:
           const title = "[bug]: " + context.workflow
           const workflow_file = path.basename(context.payload.workflow)
           const issues = await github.rest.search.issuesAndPullRequests({
-            q:  title + "+label:bug+state:open+type:issue+repo:" + reponame,
+            q:  title + "+in:title+label:bug+state:open+type:issue+repo:" + reponame,
           })
 
           const run = await github.rest.actions.getWorkflowRun( {
