@@ -1,0 +1,49 @@
+name: Close issue
+description: Close a GitHub issue based on workflow success
+
+runs:
+  using: "composite"
+  steps:
+    - name: Close issue
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          var path = require('path');
+
+          const reponame = context.repo.owner + "/" + context.repo.repo
+          const title = "[bug]: " + context.workflow
+          const workflow_file = path.basename(context.payload.workflow)
+          const issues = await github.rest.search.issuesAndPullRequests({
+            q:  title + "+label:bug+state:open+type:issue+repo:" + reponame,
+          })
+
+          const run = await github.rest.actions.getWorkflowRun( {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            run_id: context.runId,
+          })
+
+          if (issues.data.total_count == 0) {
+            console.log("No issues found, exiting")
+          } else {
+            issue = issues.data.items[0].number
+            console.log("Issue " + issue + " found, closing issue...")
+            
+            github.rest.issues.createComment({
+              issue_number: issue,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "### Closing issue based on workflow '" + context.workflow + "' success\n",
+                    "Run: " + run.data.html_url + "\n" +
+                    "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
+                    "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
+                    "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
+                    "Date: " + run.data.run_started_at + "\n"
+            })
+            github.rest.issues.update({
+              issue_number: issue,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "closed",
+            })
+          }
