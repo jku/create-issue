@@ -35,6 +35,18 @@ runs:
             })
             console.log(issues)
             if (issues.data.total_count == 0) {
+              await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: title,
+                  body: "### Workflow run failed for '" + context.workflow + "'.\n" + 
+                        "Run: " + run.data.html_url + "\n" +
+                        "Workflow: " + run.data.repository.html_url + "/" + run.data.path + "\n" + 
+                        "Workflow runs: " + run.data.repository.html_url + /actions/workflows/ + workflow_file + "\n" + 
+                        "Trigger: " + context.eventName + "\n" +
+                        "Branch: " + context.payload.ref + "\n" +
+                        "Date: " + run.data.run_started_at + "\n"
+                })              
             } else {
               console.log("issue exists already, not filing a new one")
             }
