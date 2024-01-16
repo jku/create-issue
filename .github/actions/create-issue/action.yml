@@ -1,6 +1,11 @@
 name: Create Issue
 description: Create a github issue on workflow failure or close an issue on success
 
+inputs:
+  success:
+    description: "Is the workflow succeeding"
+    required: true
+    type: bool
 runs:
   using: "composite"
   steps:
@@ -17,3 +22,22 @@ runs:
             run_id: context.runId,
           })
           console.log(run)
+
+
+          if ({{ inputs.success }}) { 
+            console.log("succeeding. TODO")
+          } else {
+            console.log("failing. TODO: file issue")
+            # find existing issue
+            reponame = context.repo.owner + "/" + context.repo.repo
+            title = "[bug]: " + context.workflow
+            const issues = await github.rest.search.issuesAndPullRequests({
+              q:  title + "+label:bug+state:open+type:issue+repo:" + reponame,
+            })
+            console.log(issues)
+            if (issues.data.total_count == 0) {
+              # File issue
+            } else {
+              console.log("issue exists already, not filing a new one")
+            }
+          }
