@@ -45,7 +45,7 @@ runs:
                   title: title,
                   body: "### Workflow run failed for '" + context.workflow + "'.\n" + 
                         "Run: " + run.data.html_url + "\n" +
-                        "Workflow: " + run.data.repository.html_url + "/" + run.data.path + "\n" + 
+                        "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
                         "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
                         "Trigger: " + context.eventName + "\n" +
                         "Branch: " + context.payload.ref + "\n" +
