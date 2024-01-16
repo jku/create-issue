@@ -33,12 +33,12 @@ runs:
               issue_number: issue,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "### Closing issue based on workflow '" + context.workflow + "' success\n",
+              body: "### Closing issue based on workflow '" + context.workflow + "' success\n" +
                     "Run: " + run.data.html_url + "\n" +
                     "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
                     "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
                     "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
-                    "Date: " + run.data.run_started_at + "\n"
+                    "Date: " + run.data.run_started_at + "\n",
             })
             github.rest.issues.update({
               issue_number: issue,
