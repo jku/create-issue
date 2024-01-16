@@ -1,0 +1,21 @@
+name: Test create-issue
+
+on:
+  workflow_dispatch
+
+jobs:
+  actual_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: fail?
+        run: |
+          false
+  if-failed:
+    runs-on: ubuntu-latest
+    needs: [actual_job]
+    permissions:
+      issues: 'write'
+    if: always() && needs.actual_job.result == 'failure'
+    steps:
+      - name: Create issue on failure
+        uses: jku/create-issue/.github/actions/create-issue@main
