@@ -26,7 +26,7 @@ runs:
           var path = require('path');
 
           const reponame = context.repo.owner + "/" + context.repo.repo
-          const title = "[bug]: " + context.workflow
+          const title = "[bug]: Workflow failure '" + context.workflow + "'"
           const workflow_file = path.basename(context.payload.workflow)
           const issues = await github.rest.search.issuesAndPullRequests({
             q:  title + "+in:title+label:bug+state:open+type:issue+repo:" + reponame,
