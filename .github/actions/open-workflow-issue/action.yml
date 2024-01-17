@@ -9,8 +9,8 @@ description: Open a github issue for a workflow failure
 # * actions: read
 
 inputs:
-  comment-for-each-failure:
-    description: 'Should a comment be added to existing issue for every failure'
+  comment_for_each_failure:
+    description: 'Should a comment be added to existing issue for every new failure'
     required: false
     default: false
 
@@ -19,8 +19,6 @@ runs:
   steps:
     - name: Create issue
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      env:
-        INPUT_COMMENT_FOR_EACH_FAILURE: ${{ inputs.comment-for-each-failure }}
       with:
         script: |
           var path = require('path');
@@ -54,7 +52,7 @@ runs:
                 labels: ["bug"],
                 body: body,
               })
-          } else if (process.env.INPUT_COMMENT_FOR_EACH_FAILURE == "true") {
+          } else if (${{ inputs.comment_for_each_failure }}) {
             issue = issues.data.items[0].number
             console.log(`issue ${issue} found, adding a comment`)
             await github.rest.issues.createComment({
