@@ -26,10 +26,10 @@ runs:
           var path = require('path');
 
           const reponame = context.repo.owner + "/" + context.repo.repo
-          const title = "[bug]: Workflow failure '" + context.workflow + "'"
+          const title = `[bug]: Workflow failure '${context.workflow}'"
           const workflow_file = path.basename(context.payload.workflow)
           const issues = await github.rest.search.issuesAndPullRequests({
-            q:  title + "+in:title+label:bug+state:open+type:issue+repo:" + reponame,
+            q:  `${title}+in:title+label:bug+state:open+type:issue+repo:${reponame}`,
           })
 
           const run = await github.rest.actions.getWorkflowRun( {
@@ -38,12 +38,12 @@ runs:
             run_id: context.runId,
           })
 
-          body = "### Workflow run failed for '" + context.workflow + "'.\n" +
-                 "Run: " + run.data.html_url + "\n" +
-                 "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
-                 "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
-                 "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
-                 "Date: " + run.data.run_started_at + "\n"
+          body = `### Workflow run failed for '${context.workflow}'.\n` +
+                 `Run: ${run.data.html_url}\n` +
+                 `Workflow: ${run.data.repository.html_url}/blob/${context.payload.ref}/${run.data.path}\n` + 
+                 `Workflow runs: ${run.data.repository.html_url}/actions/workflows/${workflow_file}\n` + 
+                 `Trigger: ${context.eventName} on ${context.payload.ref}\n` +
+                 `Date: ${run.data.run_started_at}`
 
           if (issues.data.total_count == 0) {
             console.log("Filing new issue for failing workflow...")
@@ -56,7 +56,7 @@ runs:
               })
           } else if (process.env.INPUT_COMMENT_FOR_EACH_FAILURE == "true") {
             issue = issues.data.items[0].number
-            console.log("issue " + issue + " found, adding a comment")
+            console.log(`issue ${issue} found, adding a comment`)
             await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -65,5 +65,5 @@ runs:
               })
           } else {
             issue = issues.data.items[0].number
-            console.log("issue " + issue + " found, not adding a comment")
+            console.log(`issue ${issue} found, not adding a comment`)
           }
