@@ -21,4 +21,4 @@ jobs:
       - name: Create issue on failure
         uses: jku/create-issue/.github/actions/open-workflow-issue@main
         with:
-          comment: true
+          comment-for-each-failure: true
