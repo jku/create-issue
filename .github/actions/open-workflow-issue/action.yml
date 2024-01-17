@@ -8,11 +8,19 @@ description: Open a github issue for a workflow failure
 # * issues: write
 # * actions: read
 
+inputs:
+  comment:
+    description: 'Should a comment be added to existing issue for every failure'
+    required: false
+    default: false
+
 runs:
   using: "composite"
   steps:
     - name: Create issue
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      env:
+        INPUT_COMMENT: ${{ inputs.comment }}
       with:
         script: |
           var path = require('path');
@@ -44,6 +52,9 @@ runs:
                       "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
                       "Date: " + run.data.run_started_at + "\n"
               })
+          } else if () {
           } else {
+            console.log (process.env.INPUT_COMMENT)
+            console.log (process.env.INPUT_COMMENT == true)
             console.log("issue exists already, not filing a new one")
           }
