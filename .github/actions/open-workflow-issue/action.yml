@@ -9,7 +9,7 @@ description: Open a github issue for a workflow failure
 # * actions: read
 
 inputs:
-  comment:
+  comment-for-each-failure:
     description: 'Should a comment be added to existing issue for every failure'
     required: false
     default: false
