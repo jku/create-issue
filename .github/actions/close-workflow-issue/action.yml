@@ -17,10 +17,10 @@ runs:
           var path = require('path');
 
           const reponame = context.repo.owner + "/" + context.repo.repo
-          const title = "[bug]: Workflow failure '" + context.workflow + "'"
+          const title = `[bug]: Workflow failure '${context.workflow}'"
           const workflow_file = path.basename(context.payload.workflow)
           const issues = await github.rest.search.issuesAndPullRequests({
-            q:  title + "+in:title+label:bug+state:open+type:issue+repo:" + reponame,
+            q:  `${title}+in:title+label:bug+state:open+type:issue+repo:${reponame}`,
           })
 
           const run = await github.rest.actions.getWorkflowRun( {
@@ -33,20 +33,22 @@ runs:
             console.log("No issues found, exiting")
           } else {
             issue = issues.data.items[0].number
-            console.log("Issue " + issue + " found, closing issue...")
+            console.log(`issue ${issue} found, closing issue`)
 
-            github.rest.issues.createComment({
+            body = `### Closing issue based on workflow '${context.workflow}' success.\n` +
+                   `Run: ${run.data.html_url}\n` +
+                   `Workflow: ${run.data.repository.html_url}/blob/${context.payload.ref}/${run.data.path}\n` + 
+                   `Workflow runs: ${run.data.repository.html_url}/actions/workflows/${workflow_file}\n` + 
+                   `Trigger: ${context.eventName} on ${context.payload.ref}\n` +
+                   `Date: ${run.data.run_started_at}`
+
+            await github.rest.issues.createComment({
               issue_number: issue,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "### Closing issue based on workflow '" + context.workflow + "' success\n" +
-                    "Run: " + run.data.html_url + "\n" +
-                    "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
-                    "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
-                    "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
-                    "Date: " + run.data.run_started_at + "\n",
+              body: body
             })
-            github.rest.issues.update({
+            await github.rest.issues.update({
               issue_number: issue,
               owner: context.repo.owner,
               repo: context.repo.repo,
