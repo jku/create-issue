@@ -52,7 +52,6 @@ runs:
                       "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
                       "Date: " + run.data.run_started_at + "\n"
               })
-          } else if () {
           } else {
             console.log (process.env.INPUT_COMMENT)
             console.log (process.env.INPUT_COMMENT == true)
