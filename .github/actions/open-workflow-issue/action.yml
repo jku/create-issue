@@ -20,7 +20,7 @@ runs:
     - name: Create issue
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       env:
-        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_COMMENT_FOR_EACH_FAILURE: ${{ inputs.comment-for-each-failure }}
       with:
         script: |
           var path = require('path');
@@ -54,7 +54,7 @@ runs:
                 labels: ["bug"],
                 body: body,
               })
-          } else if (process.env.INPUT_COMMENT == "true") {
+          } else if (process.env.INPUT_COMMENT_FOR_EACH_FAILURE == "true") {
             issue = issues.data.items[0].number
             console.log("issue " + issue + " found, adding a comment")
             await github.rest.issues.createComment({
