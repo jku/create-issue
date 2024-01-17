@@ -38,22 +38,32 @@ runs:
             run_id: context.runId,
           })
 
+          body = "### Workflow run failed for '" + context.workflow + "'.\n" +
+                 "Run: " + run.data.html_url + "\n" +
+                 "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
+                 "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
+                 "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
+                 "Date: " + run.data.run_started_at + "\n"
+
           if (issues.data.total_count == 0) {
-            console.log("Filing an issue for failing workflow...")
+            console.log("Filing new issue for failing workflow...")
             await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: title,
                 labels: ["bug"],
-                body: "### Workflow run failed for '" + context.workflow + "'.\n" +
-                      "Run: " + run.data.html_url + "\n" +
-                      "Workflow: " + run.data.repository.html_url + "/blob/" + context.payload.ref + "/" + run.data.path + "\n" + 
-                      "Workflow runs: " + run.data.repository.html_url + "/actions/workflows/" + workflow_file + "\n" + 
-                      "Trigger: " + context.eventName + " on " + context.payload.ref + "\n" +
-                      "Date: " + run.data.run_started_at + "\n"
+                body: body,
+              })
+          } else if (process.env.INPUT_COMMENT == "true") {
+            issue = issues.data.items[0].number
+            console.log("issue " + issue + " found, adding a comment")
+            await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue,
+                body: body,
               })
           } else {
-            console.log (process.env.INPUT_COMMENT)
-            console.log (process.env.INPUT_COMMENT == true)
-            console.log("issue exists already, not filing a new one")
+            issue = issues.data.items[0].number
+            console.log("issue " + issue + " found, not adding a comment")
           }
